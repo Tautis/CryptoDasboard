@@ -2,21 +2,22 @@
 
 // External imports
 import { useEffect, useState } from "react";
-
-// Firebase & API imports
-import { auth } from "@/lib/firebase";
-import { db } from "@/lib/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import {
+  arrayRemove,
+  arrayUnion,
   doc,
   getDoc,
   setDoc,
   updateDoc,
-  arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
-import { getAllCoins } from "@/lib/coingecko";
 
+import { getAllCoins } from "@/lib/coingecko";
+// Firebase & API imports
+import { auth } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+
+import CoinCardSkeleton from "../../components/CoinCardSkeleton";
 // Types
 import type { Coin } from "../../types/coin";
 
@@ -85,19 +86,7 @@ export default function AllCoins() {
       />
       <div className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {coins.length === 0 ? (
-          // Skeleton loading cards
-          Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center bg-white dark:bg-gray-900 rounded-lg shadow p-4 gap-2 border border-gray-200 dark:border-gray-700 animate-pulse"
-            >
-              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full mb-2" />
-              <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-28 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-            </div>
-          ))
+          <CoinCardSkeleton count={8} size="md" />
         ) : filteredCoins.length === 0 ? (
           <div className="col-span-full text-center text-gray-500 py-8">
             No coins found.

@@ -1,15 +1,13 @@
 "use client";
 
-// External imports
 import { useEffect, useState } from "react";
-
-// Firebase & API imports
-import { auth, db } from "@/lib/firebase";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { getAllCoins } from "@/lib/coingecko";
 
-// Types
+import { getAllCoins } from "@/lib/coingecko";
+import { auth, db } from "@/lib/firebase";
+
+import CoinCardSkeleton from "../../components/CoinCardSkeleton";
 import type { Coin } from "../../types/coin";
 
 export default function Favorites() {
@@ -55,19 +53,7 @@ export default function Favorites() {
       </div>
       <div className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {loading ? (
-          // Skeleton loading cards
-          Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center bg-white dark:bg-gray-900 rounded-lg shadow p-4 gap-2 border border-gray-200 dark:border-gray-700 animate-pulse"
-            >
-              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full mb-2" />
-              <div className="h-5 w-24 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-12 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-28 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
-              <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
-            </div>
-          ))
+          <CoinCardSkeleton count={4} size="md" />
         ) : favoriteCoins.length === 0 ? (
           <p>No favorites yet.</p>
         ) : (

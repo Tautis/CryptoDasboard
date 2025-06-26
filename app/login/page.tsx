@@ -1,16 +1,14 @@
 "use client";
 
-// External imports
-import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
-// Firebase imports
-import { auth } from "@/lib/firebase";
+import { useEffect } from "react";
 import {
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
-  GoogleAuthProvider,
 } from "firebase/auth";
+
+import { auth } from "@/lib/firebase";
 
 export default function LoginPage() {
   const router = useRouter();

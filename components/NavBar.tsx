@@ -1,17 +1,19 @@
 "use client";
 
-import { auth } from "@/lib/firebase";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { HiMenu, HiX } from "react-icons/hi";
+import { Transition } from "@headlessui/react";
+import type { User } from "firebase/auth";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
   signOut,
-  User,
 } from "firebase/auth";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { HiMenu, HiX } from "react-icons/hi";
+
+import { auth } from "@/lib/firebase";
 
 export default function NavBar() {
   const [user, setUser] = useState<User | null>(null);
@@ -137,8 +139,17 @@ export default function NavBar() {
         </button>
       </div>
       {/* Mobile Nav Drawer */}
-      {mobileOpen && (
-        <div className="md:hidden bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-4">
+      <Transition
+        show={mobileOpen}
+        enter="transition-all duration-300 ease-out"
+        enterFrom="transform scale-y-95 opacity-0 max-h-0"
+        enterTo="transform scale-y-100 opacity-100 max-h-[500px]"
+        leave="transition-all duration-200 ease-in"
+        leaveFrom="transform scale-y-100 opacity-100 max-h-[500px]"
+        leaveTo="transform scale-y-95 opacity-0 max-h-0"
+        unmount={true}
+      >
+        <div className="md:hidden bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 px-4 py-4 origin-top overflow-hidden">
           <div className="flex flex-col gap-2">
             {navLinks}
             {user ? (
@@ -170,7 +181,7 @@ export default function NavBar() {
             )}
           </div>
         </div>
-      )}
+      </Transition>
     </nav>
   );
 }

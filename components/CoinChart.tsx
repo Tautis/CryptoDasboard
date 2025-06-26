@@ -1,14 +1,15 @@
 import { Line } from "react-chartjs-2";
 import {
+  CategoryScale,
   Chart as ChartJS,
+  Filler,
+  LinearScale,
   LineElement,
   PointElement,
-  LinearScale,
   TimeScale,
   Tooltip,
-  Filler,
-  CategoryScale,
 } from "chart.js";
+
 import "chartjs-adapter-date-fns";
 
 ChartJS.register(
@@ -38,7 +39,7 @@ export default function CoinChart({ prices }: CoinChartProps) {
         data: prices.map(([, price]) => price),
         fill: true,
         borderColor: "rgba(59,130,246,1)", // blue-500
-        backgroundColor: (ctx: any) => {
+        backgroundColor: (ctx: { chart: ChartJS }) => {
           const chart = ctx.chart;
           const { ctx: canvasCtx, chartArea } = chart;
           if (!chartArea) return "rgba(59,130,246,0.1)";
@@ -73,10 +74,13 @@ export default function CoinChart({ prices }: CoinChartProps) {
         borderWidth: 1,
         padding: 10,
         callbacks: {
-          label: (ctx: any) =>
-            ` $${ctx.parsed.y.toLocaleString(undefined, {
-              maximumFractionDigits: 6,
-            })}`,
+          label: (ctx: unknown) =>
+            ` $${(ctx as { parsed: { y: number } }).parsed.y.toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 6,
+              }
+            )}`,
         },
       },
     },
@@ -93,7 +97,12 @@ export default function CoinChart({ prices }: CoinChartProps) {
         ticks: {
           color: "#64748b",
           font: { size: 12 },
-          callback: function (this: any, tickValue: string | number) {
+          callback: function (this: unknown, tickValue: string | number) {
+            if (typeof tickValue === "number") {
+              return `$${tickValue.toLocaleString(undefined, {
+                maximumFractionDigits: 3,
+              })}`;
+            }
             return `$${tickValue}`;
           },
         },
@@ -106,8 +115,12 @@ export default function CoinChart({ prices }: CoinChartProps) {
 
   return (
     <div
-      className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 sm:p-3 shadow-inner w-full"
-      style={{ minHeight: 200, height: "40vw", maxHeight: 350 }}
+      className="relative bg-gray-50 dark:bg-gray-800 rounded-lg p-2 sm:p-3 shadow-inner w-full"
+      style={{
+        minHeight: 200,
+        height: "60vw", // taller on mobile
+        maxHeight: 350,
+      }}
     >
       <Line data={data} options={options} />
     </div>
